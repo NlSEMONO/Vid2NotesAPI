@@ -1,7 +1,13 @@
+"""
+Input: URL - YouTube URL
+Output: textChunks - a list of strings
+Take in a URL input, process and generate the transcript output, divided into approximately 5 min chunks
+"""
 from youtube_transcript_api import YouTubeTranscriptApi
 
 #URL = "https://www.youtube.com/watch?v=fLSQwA5gKT4&list=PLlwePzQY_wW8P_I8BFgm0-upywEwTKd8_&index=17"
-URL = "https://www.youtube.com/watch?v=r6sGWTCMz2k"
+#URL = "https://www.youtube.com/watch?v=r6sGWTCMz2k"
+URL = "https://www.youtube.com/watch?v=9k97m8oWnaY"
 v_id_pos = URL.find("=")
 end_id_pos = URL.find("&")
 vid_id = []
