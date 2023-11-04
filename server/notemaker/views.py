@@ -6,6 +6,6 @@ def get_notes(request):
     data = request.body.decode('utf-8')
     vid_link = request.GET['link']
 
-    notes = []
+    notes = ['Continuity is', 'lorem ipsum']
 
     return JsonResponse(notes, safe=False)
