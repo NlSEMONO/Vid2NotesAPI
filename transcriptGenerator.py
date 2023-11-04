@@ -1,17 +1,17 @@
 from youtube_transcript_api import YouTubeTranscriptApi
 
-#test2 = "https://www.youtube.com/watch?v=fLSQwA5gKT4&list=PLlwePzQY_wW8P_I8BFgm0-upywEwTKd8_&index=17"
-test2 = "https://www.youtube.com/watch?v=r6sGWTCMz2k"
-v_id_pos = test2.find("=")
-end_id_pos = test2.find("&")
+#URL = "https://www.youtube.com/watch?v=fLSQwA5gKT4&list=PLlwePzQY_wW8P_I8BFgm0-upywEwTKd8_&index=17"
+URL = "https://www.youtube.com/watch?v=r6sGWTCMz2k"
+v_id_pos = URL.find("=")
+end_id_pos = URL.find("&")
 vid_id = []
 
 #Get Video ID from URL
 if(end_id_pos == -1):
     # no and sign, just remove LHS of url
-    vid_id = test2[v_id_pos+1::]
+    vid_id = URL[v_id_pos+1::]
 else:
-    vid_id = test2[v_id_pos+1:end_id_pos]
+    vid_id = URL[v_id_pos+1:end_id_pos]
 
 # get the transcript from Youtube API
 response = YouTubeTranscriptApi.get_transcript(vid_id)
