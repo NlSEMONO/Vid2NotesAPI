@@ -1,7 +1,7 @@
 from youtube_transcript_api import YouTubeTranscriptApi
 
-test2 = "https://www.youtube.com/watch?v=fLSQwA5gKT4&list=PLlwePzQY_wW8P_I8BFgm0-upywEwTKd8_&index=17"
-#test2 = "https://www.youtube.com/watch?v=r6sGWTCMz2k"
+#test2 = "https://www.youtube.com/watch?v=fLSQwA5gKT4&list=PLlwePzQY_wW8P_I8BFgm0-upywEwTKd8_&index=17"
+test2 = "https://www.youtube.com/watch?v=r6sGWTCMz2k"
 v_id_pos = test2.find("=")
 end_id_pos = test2.find("&")
 vid_id = []
@@ -47,7 +47,7 @@ for i in response:
         numStrings += 1
         
 
-print(textChunks[0])
+#print("\"" + textChunks[0] + "\"")
 
 #for j in strArray:
 
