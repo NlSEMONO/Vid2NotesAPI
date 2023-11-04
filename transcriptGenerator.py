@@ -1,7 +1,7 @@
 from youtube_transcript_api import YouTubeTranscriptApi
 
-#test2 = "https://www.youtube.com/watch?v=fLSQwA5gKT4&list=PLlwePzQY_wW8P_I8BFgm0-upywEwTKd8_&index=17"
-test2 = "https://www.youtube.com/watch?v=r6sGWTCMz2k"
+test2 = "https://www.youtube.com/watch?v=fLSQwA5gKT4&list=PLlwePzQY_wW8P_I8BFgm0-upywEwTKd8_&index=17"
+#test2 = "https://www.youtube.com/watch?v=r6sGWTCMz2k"
 v_id_pos = test2.find("=")
 end_id_pos = test2.find("&")
 vid_id = []
@@ -21,31 +21,33 @@ response = YouTubeTranscriptApi.get_transcript(vid_id)
 #print(vid_length)
 vid_length = (response[-1]['start'] + response[-1]['duration'])
 maxRead = 5*60
-intervals = vid_length / maxRead
+num_intervals = vid_length / maxRead
 
 amountRead = 0
 numStrings = 0
 
-strArray = []
+textChunks = []
 #strArray.append
-print(vid_id)
+#print(vid_id)
 
 #set up strArray with blank strings
-for k in range (int(intervals)+2):
-    strArray.append('')
+for k in range (int(num_intervals)+2):
+    textChunks.append('')
 
 #print(response)
 #iterate through the response dictionary to fill strArray with N min segments of text (N = maxRead)
 for i in response:
-    strArray[numStrings] += i["text"]
-    strArray[numStrings] += " "
+    textChunks[numStrings] += i["text"]
+    textChunks[numStrings] += " "
     amountRead += i["duration"]
-    print(i["text"])
+    #print(i["text"])
 
     if(amountRead >= maxRead):
         amountRead = 0
         numStrings += 1
+        
 
+print(textChunks[0])
 
 #for j in strArray:
 
