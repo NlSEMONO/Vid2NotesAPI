@@ -6,29 +6,36 @@ v_id_pos = test2.find("=")
 end_id_pos = test2.find("&")
 vid_id = []
 
+#Get Video ID from URL
 if(end_id_pos == -1):
     # no and sign, just remove LHS of url
     vid_id = test2[v_id_pos+1::]
 else:
     vid_id = test2[v_id_pos+1:end_id_pos]
 
+# get the transcript from Youtube API
 response = YouTubeTranscriptApi.get_transcript(vid_id)
 transcript = ""
-vid_length = (response[-1]['start'] + response[-1]['duration'])
+
 
 #print(vid_length)
+vid_length = (response[-1]['start'] + response[-1]['duration'])
+maxRead = 5*60
+intervals = vid_length / maxRead
+
 amountRead = 0
 numStrings = 0
-maxRead = 5*60
 
-intervals = vid_length / maxRead
 strArray = []
-strArray.append
+#strArray.append
 print(vid_id)
+
+#set up strArray with blank strings
 for k in range (int(intervals)+2):
     strArray.append('')
 
 #print(response)
+#iterate through the response dictionary to fill strArray with N min segments of text (N = maxRead)
 for i in response:
     strArray[numStrings] += i["text"]
     strArray[numStrings] += " "
