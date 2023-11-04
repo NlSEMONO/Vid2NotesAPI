@@ -15,7 +15,7 @@ else:
 
 # get the transcript from Youtube API
 response = YouTubeTranscriptApi.get_transcript(vid_id)
-transcript = ""
+#transcript = ""
 
 
 #print(vid_length)
