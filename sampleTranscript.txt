@@ -1,0 +1,153 @@
+
+Introduction
+0:00
+In this video,
+0:01
+I will explain the types of discontinuity a function may have,
+0:04
+and how some of them can be “removed”.
+Failing continuity
+0:08
+How may a function fail to be continuous? Let’s remember the definition.
+0:12
+We say that a function f is continuous at a point a
+0:16
+when the limit at a is the same as the value f(a).
+0:20
+Otherwise, we say that the function is discontinuous.
+0:23
+It is traditional
+0:24
+to classify discontinuities as removable, and non-removable.
+0:28
+We have a removable discontinuity when the limit EXISTS
+0:32
+but the limit is NOT equal to the value of the function f at a.
+0:36
+And we have a non-removable discontinuity
+0:38
+when the limit of the function does NOT exist.
+0:41
+I will explain why this classification is useful,
+0:43
+and the reason for the name.
+Removable discontinuities
+0:46
+Here is an example of a removable discontinuity.
+0:49
+The limit as x approaches a EXISTS, but it is NOT equal to f(a).
+0:53
+In this case, the graph has a HOLE.
+0:56
+It does not matter if the function is UNdefined at a,
+0:59
+or if it is defined but with a different value.
+1:02
+In both cases, the graph HAS a hole,
+1:04
+and both cases count as a removable discontinuity.
+1:07
+Why is it called removable?
+1:09
+Because it can be “fixed.” I will explain with an example.
+1:14
+Consider the function h, defined by the equation h(x) = sin(x)/x.
+1:20
+As x approaches 0,
+1:21
+this function HAS limit 1, but h(0) IS UNdefined.
+1:26
+This is what the graph looks like.
+1:28
+If this is the first time you are encountering this function,
+1:30
+you may be surprised; it is not obvious that this limit is 1.
+1:33
+For now, just accept that this is the case from the graph;
+1:36
+I will prove it in another video.
+1:38
+So the graph has a hole, and the function has a discontinuity.
+1:42
+But I can remove it by “filling" the hole!
+1:45
+What does this mean?
+1:47
+I am going to define a new function, called H ("big H").
+1:50
+H is exactly the same as the original function when x is not 0.
+1:54
+But in addition, I am going to define H(0) to be 1.
+1:59
+When I do this, H becomes CONTINUOUS at 0.
+2:04
+Think about the graph!
+2:05
+THIS is the graph of the original function, h ("small h"),
+2:08
+with the hole at 0.
+2:10
+The new function H is exactly the same, except it is also defined to be 1 at 0.
+2:15
+So the new function "fills the hole," so to speak, and THIS is the graph.
+2:20
+I am exaggerating a bit how I fill the whole to make it clear;
+2:22
+I probably could simply draw the graph like this.
+2:27
+What I did here, “removing” the discontinuity,
+2:30
+is something we can ALWAYS do as long as the limit exists.
+2:33
+And that is why we call it a “removable” discontinuity.
+2:37
+In a way, it is as though we had a continuous function,
+2:39
+but we forgot to define it at the point, or we defined it with the "wrong" value.
+2:43
+In science, and more particularly in physics,
+2:45
+it is common to remove discontinuities automatically whenever possible.
+2:49
+Physicists normally DON'T make any distinction
+2:51
+between a function with a removable discontinuity,
+2:54
+and the same function with the discontinuity removed.
+2:57
+For example, if a physicist talks about sin(x)/x,
+3:00
+they are probably thinking about H; about the "fixed" function.
+Non-removable discontinuities
+3:05
+By contrast, let’s look at some examples of NON-removable discontinuities.
+3:11
+This function does NOT have a limit at 0, because it has a JUMP.
+3:15
+It is a non-removable discontinuity;
+3:18
+try as we may, we cannot “fix” this function;
+3:20
+we cannot make it continuous by redefining it at 0.
+3:24
+This other function does NOT have a limit at 1,
+3:27
+because it has a VERTICAL ASYMPTOTE at 1.
+3:30
+It CANNOT be "fixed," either;
+3:31
+it CANNOT be made continuous by defining it at 1.
+3:35
+It ALSO has a non-removable discontinuity.
+3:39
+And this final example does not have a limit at 0, either.
+3:42
+It ALSO has a non-removable discontinuity;
+3:44
+there is no way to fix it.
+3:46
+In short, removable discontinuities can be...
+3:49
+well, removed!
+3:51
+Non-removable discontinuities CANNOT. THAT is the reason for the name.
