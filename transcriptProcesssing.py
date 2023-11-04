@@ -3,6 +3,10 @@ import requests
 import cohere
 import transcriptGenerator
 '''
+Input: textChunks from transcriptGenerator.py
+Output: generatedSummary - String which contains the summary of the video fed into transcriptGenerator.py
+alternatively, you can use outputList - contains the same content as generatedSummary but separated by Cohere Request # 
+
 Sticking with Generate Function
 Used Prompts: Note: Square Brackets [] mean optional/extra
     What are the main points of this [into bullet points]:
@@ -20,7 +24,6 @@ co = cohere.Client(api_keys[0])
 transcript = ""
 promptList = ["What are the main points of this in bullet points:", 
               "Summarize this into bullet points:"]
-outputs = []
 
 """
 For each sub-string, we need a prompt
@@ -64,9 +67,9 @@ for text in transcriptGenerator.textChunks:
 
 #print(str(outputList))
 
-printState = ""
+generatedOutput = ""
 for k in outputList:
-    printState += k
-    printState += "\n"
+    generatedOutput += k
+    generatedOutput += "\n"
 
-print(printState)
+print(generatedOutput)
