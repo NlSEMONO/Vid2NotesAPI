@@ -11,14 +11,8 @@ export default function Home() {
     <>
       <Navbar/>
       <img className={`${imageSettings}`} src='/vid2notes.svg'/>
-      <SubmitLink/>
-      <div id='usage' className={`${usageSettings}`}>
-        <h1 className={`${center} ${header}`}> Usage Instructions </h1><br/>
-        <ol className='list-decimal'>
-          <li> Find a YouTube video and copy its link </li>
-          <li> Paste the link in input field that says paste here </li>
-          <li> Expect notes back in a few seconds </li>
-        </ol>
+      <div className='flex flex-col h-'>
+        <SubmitLink/>
       </div>
     </>
   );
