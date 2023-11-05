@@ -2,7 +2,7 @@ import requests
 import cohere
 import transcriptGenerator
 '''
-Input: textChunks from transcriptGenerator.py
+Input: textChunks from transcriptGenerator.py. of note, the first index of textChunks is the title of the video!
 Output: generatedSummary - String which contains the summary of the video fed into transcriptGenerator.py
 alternatively, you can use outputList - contains the same content as generatedSummary but separated by Cohere Request # 
 
@@ -20,7 +20,14 @@ Used Prompts: Note: Square Brackets [] mean optional/extra
 
 Note: The Transcript Summary function on Cohere is very inaccurate, using Generate instead
 '''
-
+"""
+    For each sub-string, we need a prompt
+    co.generate request Responses: obtained via cohere.CohereAPIError().something, forgot which one
+    200 = ok
+    400 = bad request
+    498 = Blocked Input or Output
+    500 = Internal Server Errors
+"""
 # initialize the Cohere Client with an API Key
 keys = ["5tF9d0IkQRph19apERAfxoudDUzmEnfyxo6pimfB", 
         "yRYJDINsAmmxz7y00xUfeAHAaUqjAO1c7XXLXzhv",
@@ -31,7 +38,7 @@ keys = ["5tF9d0IkQRph19apERAfxoudDUzmEnfyxo6pimfB",
             "ua2N4o4bsuk1ZqyUSr7q96QOscwmYgG5Ej9pwTxu"]
 
 modelType = "command"
-randomness = 0.9
+randomness = 0.5
 
 promptList = ["What are the main points of this in bullet points:", 
                 "Summarize this into bullet points:",
@@ -48,6 +55,7 @@ def try_process(promptText, index):
                         max_tokens=4050,
                         temperature=randomness,
                         truncate="END")
+        
         #base case, we found a key that acutally works
         #no error, we can get something
         outputList = list(response.generations[0].text.split("\n"))
@@ -91,6 +99,7 @@ def process_transcriptV2(text_chunks):
             titleCheck = True
         else:
             print("chunk # " + str(count))
+            print(chunk)
             summary += try_process(chunk, 0)
             count += 1    
 
@@ -104,19 +113,9 @@ def process_transcript(text_chunks):
         #print("ERROR CODE 1: NO TRANSCRIPT FOUND!")
         return "ERROR CODE 1: NO TRANSCRIPT FOUND!"
         
-    
     co = cohere.Client(keys[0])
 
-   
-
-    """
-    For each sub-string, we need a prompt
-    co.generate request Responses: obtained via cohere.CohereAPIError().something, forgot which one
-    200 = ok
-    400 = bad request
-    498 = Blocked Input or Output
-    500 = Internal Server Errors
-    """
+    
     outputList = []
     count = 0
     api_index = 0
@@ -200,4 +199,5 @@ Debug:
 """
 
 summary = process_transcriptV2(transcriptGenerator.generate_transcript(transcriptGenerator.test_URL))
+print("==========================")
 print(summary)
