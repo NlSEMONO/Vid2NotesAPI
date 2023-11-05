@@ -48,7 +48,7 @@ Feature 2: Study Flash Cards
 
 Link to a live demo on how to use Vid2Notes
 
-[Live Demo](https://your-demo-link.com)
+[Live Demo](https://www.youtube.com/watch?v=Ln7522u1Z4g)
 
 ## Acknowledgments
 
