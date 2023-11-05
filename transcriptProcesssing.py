@@ -28,6 +28,63 @@ keys = ["5tF9d0IkQRph19apERAfxoudDUzmEnfyxo6pimfB",
             "2UGd1Y0q61JFhlGF75XIahwbeFm32cihdc69gSRp",
             "fOGiQj8bpLYdAht5fXKpAdalEoeYUJZ7O1A50jCr"]
 
+modelType = "command"
+randomness = 0.9
+
+promptList = ["What are the main points of this in bullet points:", 
+                "Summarize this into bullet points:",
+                "Summary about ", " in bullet points"]
+
+def try_process(promptText, index):
+    cohereClient = cohere.Client(keys[index])
+    try:
+        response = cohereClient.generate(
+                        model=modelType,
+                        prompt= (promptList[0] + "\n\"" + promptText + "\""),
+                        max_tokens=4050,
+                        temperature=randomness,
+                        truncate="END")
+        #base case, we found a key that acutally works
+        #no error, we can get something
+        outputList = list(response.generations[0].text.split("\n"))
+        outputList.remove(outputList[-1])
+        outputList.remove(outputList[0])
+        
+
+        plainOutput = ""
+        for k in outputList:
+            plainOutput += k
+            plainOutput += "\n"
+
+        print(plainOutput)
+        return plainOutput
+    
+    except cohere.CohereAPIError as e:
+        # we have an error
+        if(index < len(keys) - 1):
+            #recursive case, key doesnt work and there are still keys to check
+            print("checked:" + str(index+1) + " out of " + str(len(keys)))
+            return try_process(promptText, index+1)
+        else:            
+            #base case, index is past the # of keys we actually have
+            print("NO KEYS AVAILABLE!")
+            return ""
+
+
+def process_transcriptV2(text_chunks):
+    if(text_chunks == ""):
+        #print("ERROR CODE 1: NO TRANSCRIPT FOUND!")
+        return "ERROR CODE 1: NO TRANSCRIPT FOUND!"
+
+    summary = ""
+
+    for chunk in text_chunks:
+        summary += try_process(chunk, 0)    
+
+    return summary
+    
+
+
 
 def process_transcript(text_chunks):
     if(text_chunks == ""):
@@ -36,13 +93,12 @@ def process_transcript(text_chunks):
         
     
     co = cohere.Client(keys[0])
-    
-    promptList = ["What are the main points of this in bullet points:", 
-                "Summarize this into bullet points:"]
+
+   
 
     """
     For each sub-string, we need a prompt
-    co.generate Responses:
+    co.generate request Responses: obtained via cohere.CohereAPIError().something, forgot which one
     200 = ok
     400 = bad request
     498 = Blocked Input or Output
@@ -57,43 +113,46 @@ def process_transcript(text_chunks):
         if(count < maxCount):
             try:
                 cohere_response = co.generate(
-                        model='command-nightly',
+                        model=modelType,
                         prompt= (promptList[0] + "\n\"" + text + "\""),
                         max_tokens=4050,
-                        temperature=1,
+                        temperature=randomness,
                         truncate="END")
                 
                 outputList = list(cohere_response.generations[0].text.split("\n"))
                 outputList.remove(outputList[-1])
                 outputList.remove(outputList[0])
                 count += 1
-                
-                print(cohere.CohereAPIError().message)
+                #print("INPUT:")
+                #print(promptList[0] + "\n\"" + text + "\"")
+                #print(cohere.CohereAPIError().message)
             except cohere.CohereAPIError as e:
                 #print(e.message)
                 #print(e.http_status)
                 #print(e.headers)
                 # error, try with other keys
                 
-                while(cohere.CohereAPIError().message != "None" or api_index >= len(keys)):
+                while(cohere.CohereAPIError().message != "None" and api_index < len(keys)):
                     api_index += 1
                     co = cohere.Client(keys[api_index])
-                try:
-                    cohere_response = co.generate(
-                        model='command-nightly',
-                        prompt= (promptList[0] + "\n\"" + text + "\""),
-                        max_tokens=4050,
-                        temperature=1,
-                        truncate="END")
                 
-                    outputList = list(cohere_response.generations[0].text.split("\n"))
-                    outputList.remove(outputList[-1])
-                    outputList.remove(outputList[0])
-                    count += 1
-                except cohere.CohereAPIError as r:
-                    api_index += 1
-                    print("API KEYS FAILED")
-                    break
+                    try:
+                        cohere_response = co.generate(
+                            model=modelType,
+                            prompt= (promptList[0] + "\n\"" + text + "\""),
+                            max_tokens=4050,
+                            temperature=randomness,
+                            truncate="END")
+                        print("INPUT:")
+                        print(promptList[0] + "\n\"" + text + "\"")
+                        outputList = list(cohere_response.generations[0].text.split("\n"))
+                        outputList.remove(outputList[-1])
+                        outputList.remove(outputList[0])
+                        count += 1
+                    except cohere.CohereAPIError as r:
+                        api_index += 1
+                        print("API KEYS FAILED")
+                        break
             #print("count")
         else:
             count = 0
@@ -127,5 +186,5 @@ def process_transcript(text_chunks):
 Debug:
 """
 
-summary = process_transcript(transcriptGenerator.generate_transcript(transcriptGenerator.test_URL))
+summary = process_transcriptV2(transcriptGenerator.generate_transcript(transcriptGenerator.test_URL))
 print(summary)
