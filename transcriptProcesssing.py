@@ -23,10 +23,12 @@ Note: The Transcript Summary function on Cohere is very inaccurate, using Genera
 
 # initialize the Cohere Client with an API Key
 keys = ["5tF9d0IkQRph19apERAfxoudDUzmEnfyxo6pimfB", 
-            "yRYJDINsAmmxz7y00xUfeAHAaUqjAO1c7XXLXzhv",
-            "ivsDVDocsH8LnNhQ7b21PZURol6yr5x8UCVRwGdh",
-            "2UGd1Y0q61JFhlGF75XIahwbeFm32cihdc69gSRp",
-            "fOGiQj8bpLYdAht5fXKpAdalEoeYUJZ7O1A50jCr"]
+        "yRYJDINsAmmxz7y00xUfeAHAaUqjAO1c7XXLXzhv",
+        "ivsDVDocsH8LnNhQ7b21PZURol6yr5x8UCVRwGdh",
+        "2UGd1Y0q61JFhlGF75XIahwbeFm32cihdc69gSRp",
+            "fOGiQj8bpLYdAht5fXKpAdalEoeYUJZ7O1A50jCr",
+            "vFop3G1hOGieKjsRie1EfpKkF3gpXp93qL8Hafk1",
+            "ua2N4o4bsuk1ZqyUSr7q96QOscwmYgG5Ej9pwTxu"]
 
 modelType = "command"
 randomness = 0.9
@@ -35,12 +37,14 @@ promptList = ["What are the main points of this in bullet points:",
                 "Summarize this into bullet points:",
                 "Summary about ", " in bullet points"]
 
+title = ""
+
 def try_process(promptText, index):
     cohereClient = cohere.Client(keys[index])
     try:
         response = cohereClient.generate(
                         model=modelType,
-                        prompt= (promptList[0] + "\n\"" + promptText + "\""),
+                        prompt= (promptList[0] + title + "\n\"" + promptText + "\""),
                         max_tokens=4050,
                         temperature=randomness,
                         truncate="END")
@@ -48,9 +52,10 @@ def try_process(promptText, index):
         #no error, we can get something
         outputList = list(response.generations[0].text.split("\n"))
         outputList.remove(outputList[-1])
-        outputList.remove(outputList[0])
+        if(len(outputList) != 0):
+            outputList.remove(outputList[0])
         
-
+        
         plainOutput = ""
         for k in outputList:
             plainOutput += k
@@ -63,11 +68,11 @@ def try_process(promptText, index):
         # we have an error
         if(index < len(keys) - 1):
             #recursive case, key doesnt work and there are still keys to check
-            print("checked:" + str(index+1) + " out of " + str(len(keys)))
+            #print("checked:" + str(index+1) + " out of " + str(len(keys)))
             return try_process(promptText, index+1)
         else:            
             #base case, index is past the # of keys we actually have
-            print("NO KEYS AVAILABLE!")
+            print("ERROR CODE 2: NO KEYS AVAILABLE!")
             return ""
 
 
@@ -77,9 +82,17 @@ def process_transcriptV2(text_chunks):
         return "ERROR CODE 1: NO TRANSCRIPT FOUND!"
 
     summary = ""
-
+    titleCheck = False
+    count = 0
     for chunk in text_chunks:
-        summary += try_process(chunk, 0)    
+        if(titleCheck != True):
+            #title chunk
+            title = chunk
+            titleCheck = True
+        else:
+            print("chunk # " + str(count))
+            summary += try_process(chunk, 0)
+            count += 1    
 
     return summary
     

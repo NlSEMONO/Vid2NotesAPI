@@ -1,6 +1,7 @@
 import subprocess
 from sys import platform
 from fpdf import FPDF
+
 def main(text_to_export:str, output_location:str):
     """Include .pdf in output location"""
     pdf = FPDF()
