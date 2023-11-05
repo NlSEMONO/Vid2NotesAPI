@@ -22,14 +22,20 @@ Note: The Transcript Summary function on Cohere is very inaccurate, using Genera
 '''
 
 # initialize the Cohere Client with an API Key
-api_keys = ["5tF9d0IkQRph19apERAfxoudDUzmEnfyxo6pimfB", 
+keys = ["5tF9d0IkQRph19apERAfxoudDUzmEnfyxo6pimfB", 
             "yRYJDINsAmmxz7y00xUfeAHAaUqjAO1c7XXLXzhv",
             "ivsDVDocsH8LnNhQ7b21PZURol6yr5x8UCVRwGdh",
-            "2UGd1Y0q61JFhlGF75XIahwbeFm32cihdc69gSRp"]
+            "2UGd1Y0q61JFhlGF75XIahwbeFm32cihdc69gSRp",
+            "fOGiQj8bpLYdAht5fXKpAdalEoeYUJZ7O1A50jCr"]
 
 
 def process_transcript(text_chunks):
-    co = cohere.Client(api_keys[0])
+    if(text_chunks == ""):
+        #print("ERROR CODE 1: NO TRANSCRIPT FOUND!")
+        return "ERROR CODE 1: NO TRANSCRIPT FOUND!"
+        
+    
+    co = cohere.Client(keys[0])
     
     promptList = ["What are the main points of this in bullet points:", 
                 "Summarize this into bullet points:"]
@@ -61,11 +67,17 @@ def process_transcript(text_chunks):
                 outputList.remove(outputList[-1])
                 outputList.remove(outputList[0])
                 count += 1
+                
+                print(cohere.CohereAPIError().message)
             except cohere.CohereAPIError as e:
                 #print(e.message)
                 #print(e.http_status)
                 #print(e.headers)
-                api_index += 1
+                # error, try with other keys
+                
+                while(cohere.CohereAPIError().message != "None" or api_index >= len(keys)):
+                    api_index += 1
+                    co = cohere.Client(keys[api_index])
                 try:
                     cohere_response = co.generate(
                         model='command-nightly',
@@ -86,11 +98,11 @@ def process_transcript(text_chunks):
         else:
             count = 0
             api_index += 1
-            if(api_index >= len(api_keys)):
+            if(api_index >= len(keys)):
                 print("BREAK ASAP")
                 break
             else:
-                co = cohere.Client(api_keys[api_index])
+                co = cohere.Client(keys[api_index])
         #print(str(stuff))
         #else:
             #print("ERROR")

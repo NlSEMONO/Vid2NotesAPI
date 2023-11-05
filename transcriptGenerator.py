@@ -7,9 +7,10 @@ from youtube_transcript_api import YouTubeTranscriptApi
 
 #test_URL = "https://www.youtube.com/watch?v=fLSQwA5gKT4&list=PLlwePzQY_wW8P_I8BFgm0-upywEwTKd8_&index=17" #Calc Continuity Lecture
 #test_URL = "https://www.youtube.com/watch?v=r6sGWTCMz2k" #3Blue1Brown Fourier Series
-test_URL = "https://www.youtube.com/watch?v=9k97m8oWnaY" #Calc 3 Surface Integrals
+#test_URL = "https://www.youtube.com/watch?v=9k97m8oWnaY" #Calc 3 Surface Integrals
 #test_URL = "https://www.youtube.com/watch?v=WCwJNnx36Rk" #Ben Eater Bi-Stable 555 circuit video
 #test_URL = "https://www.youtube.com/watch?v=kRlSFm519Bo" #Ben Eater Astable 555 circuit video
+test_URL = "https://www.youtube.com/watch?v=sQ0BJ3H-cZ8" #Calc 3 by Prof Leonard, HAS NO TRANSCRIPT!
 
 def generate_transcript(url):
     v_id_pos = url.find("=")
@@ -24,41 +25,46 @@ def generate_transcript(url):
         vid_id = url[v_id_pos+1:end_id_pos]
 
     # get the transcript from Youtube API
-    response = YouTubeTranscriptApi.get_transcript(vid_id)
-    #print(response)
 
-    textChunks = []
-    maxRead = 3*60
-    time = 0
-    slot = 0
+    try:
+        response = YouTubeTranscriptApi.get_transcript(vid_id)
+        #print(response)
 
-    textChunks.append("")
+        textChunks = []
+        maxRead = 3*60
+        time = 0
+        slot = 0
 
-    """
-    response gives a list of dictionary as follows
-    text: string
-    start: float (in seconds)
-    duration: float (in seconds)
-    we want to read and store our transcript into 5 minute chunks
-    """
-    for dict in response:
-        if(time >= maxRead):
-            # when we have read 5ish minutes, make a new entry into textChunks
-            time = 0
-            slot += 1
-            textChunks.append("")
-            #print("new")
-        else:
-            # write the transcript segment into the current textChunks slot
-            transcriptClip = dict["text"] + " "
-            textChunks[slot] += transcriptClip
-            time += dict["duration"]
-    
-    #print(textChunks[-1])
-    #print(slot)
-    #print(len(textChunks))
-    #print(textChunks[-1])
-    return textChunks
+        textChunks.append("")
+
+        """
+        response gives a list of dictionary as follows
+        text: string
+        start: float (in seconds)
+        duration: float (in seconds)
+        we want to read and store our transcript into 5 minute chunks
+        """
+        for dict in response:
+            if(time >= maxRead):
+                # when we have read 5ish minutes, make a new entry into textChunks
+                time = 0
+                slot += 1
+                textChunks.append("")
+                #print("new")
+            else:
+                # write the transcript segment into the current textChunks slot
+                transcriptClip = dict["text"] + " "
+                textChunks[slot] += transcriptClip
+                time += dict["duration"]
+        
+        #print(textChunks[-1])
+        #print(slot)
+        #print(len(textChunks))
+        #print(textChunks[-1])
+        return textChunks
+    except:
+        #print("ERROR CODE 1: NO TRANSCRIPT FOUND")
+        return ""
         
         
 """
