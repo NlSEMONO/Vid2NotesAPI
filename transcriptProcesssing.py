@@ -24,7 +24,8 @@ Note: The Transcript Summary function on Cohere is very inaccurate, using Genera
 # initialize the Cohere Client with an API Key
 api_keys = ["5tF9d0IkQRph19apERAfxoudDUzmEnfyxo6pimfB", 
             "yRYJDINsAmmxz7y00xUfeAHAaUqjAO1c7XXLXzhv",
-            "ivsDVDocsH8LnNhQ7b21PZURol6yr5x8UCVRwGdh"]
+            "ivsDVDocsH8LnNhQ7b21PZURol6yr5x8UCVRwGdh",
+            "2UGd1Y0q61JFhlGF75XIahwbeFm32cihdc69gSRp"]
 
 
 def process_transcript(text_chunks):
@@ -45,29 +46,43 @@ def process_transcript(text_chunks):
     count = 0
     api_index = 0
     maxCount = 4
-    response = 0
-
+    #print(len(text_chunks))
     for text in text_chunks:
         if(count < maxCount):
-            cohere_response = co.generate(
-                    model='command-nightly',
-                    prompt= (promptList[0] + "\n\"" + text + "\""),
-                    max_tokens=4050,
-                    temperature=0.5,
-                    truncate="END")
-            
-            
-            
-            outputList = list(cohere_response.generations[0].text.split("\n"))
-            outputList.remove(outputList[-1])
-            outputList.remove(outputList[0])
-            count += 1
+            try:
+                cohere_response = co.generate(
+                        model='command-nightly',
+                        prompt= (promptList[0] + "\n\"" + text + "\""),
+                        max_tokens=4050,
+                        temperature=1,
+                        truncate="END")
+                
+                outputList = list(cohere_response.generations[0].text.split("\n"))
+                outputList.remove(outputList[-1])
+                outputList.remove(outputList[0])
+                count += 1
+            except cohere.CohereAPIError as e:
+                #print(e.message)
+                #print(e.http_status)
+                #print(e.headers)
+                api_index += 1
+                try:
+                    cohere_response = co.generate(
+                        model='command-nightly',
+                        prompt= (promptList[0] + "\n\"" + text + "\""),
+                        max_tokens=4050,
+                        temperature=1,
+                        truncate="END")
+                
+                    outputList = list(cohere_response.generations[0].text.split("\n"))
+                    outputList.remove(outputList[-1])
+                    outputList.remove(outputList[0])
+                    count += 1
+                except cohere.CohereAPIError as r:
+                    api_index += 1
+                    print("API KEYS FAILED")
+                    break
             #print("count")
-            
-            
-            
-            
-            
         else:
             count = 0
             api_index += 1
@@ -100,5 +115,5 @@ def process_transcript(text_chunks):
 Debug:
 """
 
-testOut = process_transcript(transcriptGenerator.generate_transcript(transcriptGenerator.test_URL))
-print(testOut)
+summary = process_transcript(transcriptGenerator.generate_transcript(transcriptGenerator.test_URL))
+print(summary)
