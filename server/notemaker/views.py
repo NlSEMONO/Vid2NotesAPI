@@ -18,22 +18,37 @@ def get_notes(request):
 
     notes = ['Continuity is', 'lorem ipsum']
     parsed_transcript = generate_transcript(vid_link)
-    print(parsed_transcript)
-    print(parsed_transcript[-1])
+    # print(len(parsed_transcript))
+    # print('==================================\n\n')
+    # print(parsed_transcript)
+    # if len(parsed_transcript) == 2:
+    #     print('==================================\n\n')
+    #     print(parsed_transcript[-2])
+    # print('==================================\n\n')
+    # print(parsed_transcript[-1])
     if parsed_transcript == "":
         return JsonResponse([-1], safe=False)
     notes = process_transcriptV2(parsed_transcript, get_title(get_video_id(vid_link)))
+    # print('==================================\n\n')
+    # print (notes)
+    notes = notes.split('\n')
+    print(notes)
+    # # if len(notes) == 1:
+    for i in range(len(notes)):
+        notes[i] = notes[i].split('•')
+    notes = [item for sublist in notes for item in sublist]
+    # for i in range(len(notes)):
+    #     notes[i] = notes[i].split(' -')
+    # notes = [item for sublist in notes for item in sublist]
 
-    notes = notes.split('- ')
-    print(notes)
-    if len(notes) == 1:
-        notes[0] = notes[0].split('•')
-        print(notes)
-        notes = [item for sublist in notes for item in sublist]
-    print(notes)
     for i in range(len(notes)):
         notes[i] = notes[i].strip()
-        notes[i] = notes[i].strip('$}{')
+        str_so_far = ''
+        for j in range(len(notes[i])):
+            if notes[i][j] not in {'$', '{', '}'}:
+                str_so_far += notes[i][j]
+        notes[i] = str_so_far
+
     notes_to_send = []
     for item in notes:
         if item != '':

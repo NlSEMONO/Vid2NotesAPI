@@ -1,6 +1,10 @@
-txt = ['\n•ajkasdjkasjd \n•asjdkajsdkajsd']
-txt[0] = txt[0].split('•')
-print(txt)
-for i in range(len(txt[0])):
-    txt[0][i] = txt[0][i].strip()
+# txt = '- suck me • jasdljfasdfk • aasd - asdfasdf'
+# txt = txt.split('- ')
+# for i in range(len(txt)):
+#     txt[i] = txt[i].split('•')
+# txt = [item for sublist in txt for item in sublist]
+# print(txt)
+
+txt = "ajsdkfjaksdf$jaskdlfjaksdf$##$"
+txt=txt.strip("$")
 print(txt)
