@@ -31,8 +31,8 @@ keys = ["5tF9d0IkQRph19apERAfxoudDUzmEnfyxo6pimfB",
 
 def process_transcript(text_chunks):
     if(text_chunks == ""):
-        #print("ERROR CODE 1: NO TRANSCRIPT FOUND")
-        return "ERROR CODE 1: NO TRANSCRIPT FOUND"
+        #print("ERROR CODE 1: NO TRANSCRIPT FOUND!")
+        return "ERROR CODE 1: NO TRANSCRIPT FOUND!"
         
     
     co = cohere.Client(keys[0])
