@@ -5,12 +5,12 @@ Take in a URL input, process and generate the transcript output, divided into ap
 """
 from youtube_transcript_api import YouTubeTranscriptApi
 
-#test_URL = "https://www.youtube.com/watch?v=fLSQwA5gKT4&list=PLlwePzQY_wW8P_I8BFgm0-upywEwTKd8_&index=17" #Calc Continuity Lecture
-#test_URL = "https://www.youtube.com/watch?v=r6sGWTCMz2k" #3Blue1Brown Fourier Series
+#test_URL = "https://www.youtube.com/watch?v=y1WYANJ7IPc&list=PLlwePzQY_wW8P_I8BFgm0-upywEwTKd8_&index=16" #Calc Continuity Lecture
+test_URL = "https://www.youtube.com/watch?v=r6sGWTCMz2k" #3Blue1Brown Fourier Series
 #test_URL = "https://www.youtube.com/watch?v=9k97m8oWnaY" #Calc 3 Surface Integrals
 #test_URL = "https://www.youtube.com/watch?v=WCwJNnx36Rk" #Ben Eater Bi-Stable 555 circuit video
 #test_URL = "https://www.youtube.com/watch?v=kRlSFm519Bo" #Ben Eater Astable 555 circuit video
-test_URL = "https://www.youtube.com/watch?v=sQ0BJ3H-cZ8" #Calc 3 by Prof Leonard, HAS NO TRANSCRIPT!
+#test_URL = "https://www.youtube.com/watch?v=sQ0BJ3H-cZ8" #Calc 3 by Prof Leonard, HAS NO TRANSCRIPT!
 
 def generate_transcript(url):
     v_id_pos = url.find("=")
@@ -32,6 +32,7 @@ def generate_transcript(url):
 
         textChunks = []
         maxRead = 3*60
+        minRead = 3*60
         time = 0
         slot = 0
 
@@ -56,8 +57,8 @@ def generate_transcript(url):
                 transcriptClip = dict["text"] + " "
                 textChunks[slot] += transcriptClip
                 time += dict["duration"]
-        
-        #print(textChunks[-1])
+
+        #print(textChunks[0])
         #print(slot)
         #print(len(textChunks))
         #print(textChunks[-1])
@@ -72,4 +73,4 @@ Debug:
 
 """
 testOut = generate_transcript(test_URL)
-#print(testOut)
+#print(str(testOut))
