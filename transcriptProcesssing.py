@@ -42,7 +42,7 @@ def process_transcript(text_chunks):
 
     """
     For each sub-string, we need a prompt
-    co.generate Responses:
+    co.generate request Responses: obtained via cohere.CohereAPIError().something, forgot which one
     200 = ok
     400 = bad request
     498 = Blocked Input or Output
