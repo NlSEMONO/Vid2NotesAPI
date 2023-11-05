@@ -1,6 +1,6 @@
 import requests
 import cohere
-import transcriptGenerator
+# import transcriptGenerator
 '''
 Input: textChunks from transcriptGenerator.py
 Output: generatedSummary - String which contains the summary of the video fed into transcriptGenerator.py
@@ -33,18 +33,19 @@ keys = ["5tF9d0IkQRph19apERAfxoudDUzmEnfyxo6pimfB",
 modelType = "command"
 randomness = 0.9
 
-promptList = ["What are the main points of this in bullet points:", 
-                "Summarize this into bullet points:",
-                "Summary about ", " in bullet points"]
+# promptList = ["What are the main points of this in bullet points:", 
+#                 "Summarize this into bullet points:",
+#                 f"Summary about ", " in bullet points"]
 
-title = ""
+def generate_prompt(title):
+    return f'What are the main points of this video about: {title} in bullet points:'
 
-def try_process(promptText, index):
+def try_process(promptText, index, title):
     cohereClient = cohere.Client(keys[index])
     try:
         response = cohereClient.generate(
                         model=modelType,
-                        prompt= (promptList[0] + title + "\n\"" + promptText + "\""),
+                        prompt= (generate_prompt(title) + "\n\"" + promptText + "\""),
                         max_tokens=4050,
                         temperature=randomness,
                         truncate="END")
@@ -54,7 +55,8 @@ def try_process(promptText, index):
         outputList.remove(outputList[-1])
         if(len(outputList) != 0):
             outputList.remove(outputList[0])
-        
+        print()
+        print(outputList)
         
         plainOutput = ""
         for k in outputList:
@@ -69,14 +71,14 @@ def try_process(promptText, index):
         if(index < len(keys) - 1):
             #recursive case, key doesnt work and there are still keys to check
             #print("checked:" + str(index+1) + " out of " + str(len(keys)))
-            return try_process(promptText, index+1)
+            return try_process(promptText, index+1, title)
         else:            
             #base case, index is past the # of keys we actually have
             print("ERROR CODE 2: NO KEYS AVAILABLE!")
             return ""
 
 
-def process_transcriptV2(text_chunks):
+def process_transcriptV2(text_chunks, title):
     if(text_chunks == ""):
         #print("ERROR CODE 1: NO TRANSCRIPT FOUND!")
         return "ERROR CODE 1: NO TRANSCRIPT FOUND!"
@@ -87,117 +89,20 @@ def process_transcriptV2(text_chunks):
     for chunk in text_chunks:
         if(titleCheck != True):
             #title chunk
-            title = chunk
+            # title = chunk
             titleCheck = True
         else:
             print("chunk # " + str(count))
-            summary += try_process(chunk, 0)
-            count += 1    
+            summary += try_process(chunk, 0, title)
+            count += 1
 
     return summary
     
-
-
-
-def process_transcript(text_chunks):
-    if(text_chunks == ""):
-        #print("ERROR CODE 1: NO TRANSCRIPT FOUND!")
-        return "ERROR CODE 1: NO TRANSCRIPT FOUND!"
-        
-    
-    co = cohere.Client(keys[0])
-
-   
-
-    """
-    For each sub-string, we need a prompt
-    co.generate request Responses: obtained via cohere.CohereAPIError().something, forgot which one
-    200 = ok
-    400 = bad request
-    498 = Blocked Input or Output
-    500 = Internal Server Errors
-    """
-    outputList = []
-    count = 0
-    api_index = 0
-    maxCount = 4
-    #print(len(text_chunks))
-    for text in text_chunks:
-        if(count < maxCount):
-            try:
-                cohere_response = co.generate(
-                        model=modelType,
-                        prompt= (promptList[0] + "\n\"" + text + "\""),
-                        max_tokens=4050,
-                        temperature=randomness,
-                        truncate="END")
-                
-                outputList = list(cohere_response.generations[0].text.split("\n"))
-                outputList.remove(outputList[-1])
-                outputList.remove(outputList[0])
-                count += 1
-                #print("INPUT:")
-                #print(promptList[0] + "\n\"" + text + "\"")
-                #print(cohere.CohereAPIError().message)
-            except cohere.CohereAPIError as e:
-                #print(e.message)
-                #print(e.http_status)
-                #print(e.headers)
-                # error, try with other keys
-                
-                while(cohere.CohereAPIError().message != "None" and api_index < len(keys)):
-                    api_index += 1
-                    co = cohere.Client(keys[api_index])
-                
-                    try:
-                        cohere_response = co.generate(
-                            model=modelType,
-                            prompt= (promptList[0] + "\n\"" + text + "\""),
-                            max_tokens=4050,
-                            temperature=randomness,
-                            truncate="END")
-                        print("INPUT:")
-                        print(promptList[0] + "\n\"" + text + "\"")
-                        outputList = list(cohere_response.generations[0].text.split("\n"))
-                        outputList.remove(outputList[-1])
-                        outputList.remove(outputList[0])
-                        count += 1
-                    except cohere.CohereAPIError as r:
-                        api_index += 1
-                        print("API KEYS FAILED")
-                        break
-            #print("count")
-        else:
-            count = 0
-            api_index += 1
-            if(api_index >= len(keys)):
-                print("BREAK ASAP")
-                break
-            else:
-                co = cohere.Client(keys[api_index])
-        #print(str(stuff))
-        #else:
-            #print("ERROR")
-
-    #print(outputList)
-
-    #print(str(outputList))
-    
-    generatedOutput = ""
-    for k in outputList:
-        generatedOutput += k
-        generatedOutput += "\n"
-    
-    """
-    Debug: just output the generated summary
-    """
-    #print(generatedOutput)
-    
-    return generatedOutput
 
 """
 Debug:
 """
 
-summary = process_transcriptV2(transcriptGenerator.generate_transcript(transcriptGenerator.test_URL))
-print(summary)
+# summary = process_transcriptV2(transcriptGenerator.generate_transcript(transcriptGenerator.test_URL))
+# print('=========================================')
+# print(summary)
