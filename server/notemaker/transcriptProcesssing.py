@@ -70,27 +70,27 @@ def try_process(promptText, index, title, media='video', type=1):
         outputList = list(response.generations[0].text.split("\n"))
         print('++++++++++++++++++++++++++++++++++++\n\n')
         print(f'{outputList}')
-        while '' == outputList[-1]:
-            outputList.remove(outputList[-1])
-            if(len(outputList) != 0 and 'summary of the main points' in outputList[0] or '' == outputList[0]):
-                outputList.remove(outputList[0])
-        print('===================================\n\n')
-        print(outputList)
-        
-        plainOutput = ""
-        for k in outputList:
-            if k != "":
-                to_add = k
-                while k != '' and k[0] in BLACKLISTED_SYMBOLS:
-                    to_add = to_add[1:]
-                plainOutput += to_add
-            else:
-                plainOutput += k
-            plainOutput += "\n"
-
-        print(plainOutput)
-        return plainOutput
-    
+        if type == 1:
+            while '' == outputList[-1]:
+                outputList.remove(outputList[-1])
+                if(len(outputList) != 0 and 'summary of the main points' in outputList[0] or '' == outputList[0]):
+                    outputList.remove(outputList[0])
+            print('===================================\n\n')
+            print(outputList)
+            
+            plainOutput = ""
+            for k in outputList:
+                if k != "":
+                    while k != '' and k[0] in BLACKLISTED_SYMBOLS:
+                        k = k[1:]
+                    plainOutput += k
+                else:
+                    plainOutput += k
+                plainOutput += "\n"
+            print(plainOutput)
+            return plainOutput
+        else:
+            return '*()&*68234' if (len(outputList) < 2 or outputList[2] == '') else f'{outputList[2]}\n'
     except cohere.CohereAPIError as e:
         # we have an error
         if(index < len(keys) - 1):

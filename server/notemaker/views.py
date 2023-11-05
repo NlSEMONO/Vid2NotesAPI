@@ -8,8 +8,13 @@ from notemaker.transcriptGenerator import *
 from notemaker.transcriptProcesssing import *
 from .models import *
 from notemaker.export import *
+from .NOTES import *
 
 MIN_DOWNVOTES = 3
+
+def temp(request):
+    print(NOTES)
+    return JsonResponse(NOTES, safe=False)
 
 # Create your views here.
 def get_notes(request):
@@ -56,30 +61,25 @@ def get_notes(request):
 
     return JsonResponse(notes_to_send, safe=False)
 
+@csrf_exempt
 def fill_in_the_blanks(request):
     data = request.body.decode('utf-8')
     data = json.loads(data)
 
     notes = data['notes']
+    print(notes)
     defs = [note for note in notes if len(note) <= 500]
-    defs.insert(0, 'bruh')
-    questions = process_transcriptV2(defs, data['title'], type=2)
-    answers = []
-    for q in questions:
-        prev = ' '
-        q_ans = []
-        str_to_add = ''
-        for c in q:
-            if c == '_' and (prev == ' ' or prev == '_'):
-                str_to_add += c
-            elif str_to_add != '':
-                q_ans.append(str_to_add)
-                str_to_add = ''
-        answers.append(q_ans)
-    for i in range(len(answers)):
-        answers[i] = ', '.join([ans for ans in answers[i] if ans != ' '])
-
-    return JsonResponse({'questions': questions, 'answers': answers}, safe=False)
+    print(defs)
+    questions = process_transcriptV2(defs, 'XD!', type=2).split('\n')[:-1]
+    error = '*()&*68234'
+    q_to_send = []
+    a_to_send = []
+    for i in range(len(questions)):
+        if questions[i] != error:
+            q_to_send.append(questions[i])
+            a_to_send.append(defs[i])
+    print(q_to_send)
+    return JsonResponse({'questions': q_to_send, 'answers': a_to_send}, safe=False)
 
 @csrf_exempt
 def reaction(request):
