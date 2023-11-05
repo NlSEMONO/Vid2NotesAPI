@@ -1,6 +1,6 @@
-from xxlimited import new
 import requests
 import cohere
+# from NOTES import NOTES
 # import transcriptGenerator
 '''
 Input: textChunks from transcriptGenerator.py
@@ -35,28 +35,33 @@ modelType = "command"
 randomness = 0
 PUNC = {'?', '.', ',', '!', ':', ';'}
 BLACKLIST = {'what'}
+BLACKLISTED_SYMBOLS = {'-','*', ' '}
+TEXT_BREAKPOINT = 6 * 60
 
 # promptList = ["What are the main points of this in bullet points:", 
 #                 "Summarize this into bullet points:",
 #                 f"Summary about ", " in bullet points"]
 
-def generate_prompt(title):
-    str_so_far = ''
-    for char in title:
-        if char in PUNC:
-            break
-        str_so_far += char
-    new_title = str_so_far.split()
-    new_title = ' '.join([word for word in new_title if word.lower() not in BLACKLIST])[:-1]
-    return f'Summarize the main points of this video about: {new_title} in bullet points:'
-    # return f'What are the main points of this part of a video on {title} in bullet points:'
+def generate_prompt(title, medium='video', type=1):
+    if type == 1:
+        str_so_far = ''
+        for char in title:
+            if char in PUNC:
+                break
+            str_so_far += char
+        new_title = str_so_far.split()
+        new_title = ' '.join([word for word in new_title if word.lower() not in BLACKLIST])[:-1]
+        return f'Summarize the main points of this {medium} about: {new_title} in bullet points:'
+        # return f'What are the main points of this part of a video on {title} in bullet points:'
+    else:
+        return f"Can you turn this into a fill in the blanks question:"
 
-def try_process(promptText, index, title):
+def try_process(promptText, index, title, media='video', type=1):
     cohereClient = cohere.Client(keys[index])
     try:
         response = cohereClient.generate(
                         model=modelType,
-                        prompt= (generate_prompt(title) + "\n\"" + promptText + "\""),
+                        prompt= (generate_prompt(title, media, type) + "\n\"" + promptText + "\""),
                         max_tokens=4050,
                         temperature=randomness,
                         truncate="END")
@@ -65,16 +70,20 @@ def try_process(promptText, index, title):
         outputList = list(response.generations[0].text.split("\n"))
         print('++++++++++++++++++++++++++++++++++++\n\n')
         print(f'{outputList}')
-        outputList.remove(outputList[-1])
-        if(len(outputList) != 0):
-            outputList.remove(outputList[0])
+        while '' == outputList[-1]:
+            outputList.remove(outputList[-1])
+            if(len(outputList) != 0 and 'summary of the main points' in outputList[0] or '' == outputList[0]):
+                outputList.remove(outputList[0])
         print('===================================\n\n')
         print(outputList)
         
         plainOutput = ""
         for k in outputList:
-            if k != "" and k[0] == "-":
-                plainOutput += k[1:]
+            if k != "":
+                to_add = k
+                while k != '' and k[0] in BLACKLISTED_SYMBOLS:
+                    to_add = to_add[1:]
+                plainOutput += to_add
             else:
                 plainOutput += k
             plainOutput += "\n"
@@ -94,11 +103,11 @@ def try_process(promptText, index, title):
             return ""
 
 
-def process_transcriptV2(text_chunks, title):
+def process_transcriptV2(text_chunks, title, length=90000, type=1):
     if(text_chunks == ""):
         #print("ERROR CODE 1: NO TRANSCRIPT FOUND!")
         return "ERROR CODE 1: NO TRANSCRIPT FOUND!"
-
+    print(type)
     summary = ""
     titleCheck = False
     count = 0
@@ -111,7 +120,7 @@ def process_transcriptV2(text_chunks, title):
             print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n\n')
             print("chunk # " + str(count))
             print(f'\n{chunk}')
-            summary += try_process(chunk, 0, title)
+            summary += try_process(chunk, 0, title, 'text' if length <= TEXT_BREAKPOINT else 'video', type=type)
             count += 1
 
     return summary
@@ -120,6 +129,8 @@ def process_transcriptV2(text_chunks, title):
 """
 Debug:
 """
+# flashcards = process_transcriptV2(NOTES, 'test', type=2)
+# print(flashcards)
 
 # summary = process_transcriptV2(transcriptGenerator.generate_transcript(transcriptGenerator.test_URL))
 # print('=========================================')

@@ -68,6 +68,15 @@ def generate_transcript(url):
     except:
         #print("ERROR CODE 1: NO TRANSCRIPT FOUND")
         return ""
+    
+def get_video_length(url):
+    vid_id = get_video_id(url)
+    try: 
+        response = YouTubeTranscriptApi.get_transcript(vid_id)
+        return response[-1]['start'] + response[-1]['duration']
+    except:
+        return -1
+
 
 def get_video_id(url):
     v_id_pos = url.find("=")

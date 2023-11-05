@@ -28,7 +28,7 @@ def get_notes(request):
     # print(parsed_transcript[-1])
     if parsed_transcript == "":
         return JsonResponse([-1], safe=False)
-    notes = process_transcriptV2(parsed_transcript, get_title(get_video_id(vid_link)))
+    notes = process_transcriptV2(parsed_transcript, get_title(get_video_id(vid_link)), length=get_video_length(vid_link))
     # print('==================================\n\n')
     # print (notes)
     notes = notes.split('\n')
@@ -55,6 +55,31 @@ def get_notes(request):
             notes_to_send.append(item)
 
     return JsonResponse(notes_to_send, safe=False)
+
+def fill_in_the_blanks(request):
+    data = request.body.decode('utf-8')
+    data = json.loads(data)
+
+    notes = data['notes']
+    defs = [note for note in notes if len(note) <= 500]
+    defs.insert(0, 'bruh')
+    questions = process_transcriptV2(defs, data['title'], type=2)
+    answers = []
+    for q in questions:
+        prev = ' '
+        q_ans = []
+        str_to_add = ''
+        for c in q:
+            if c == '_' and (prev == ' ' or prev == '_'):
+                str_to_add += c
+            elif str_to_add != '':
+                q_ans.append(str_to_add)
+                str_to_add = ''
+        answers.append(q_ans)
+    for i in range(len(answers)):
+        answers[i] = ', '.join([ans for ans in answers[i] if ans != ' '])
+
+    return JsonResponse({'questions': questions, 'answers': answers}, safe=False)
 
 @csrf_exempt
 def reaction(request):
