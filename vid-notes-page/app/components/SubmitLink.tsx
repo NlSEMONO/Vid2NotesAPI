@@ -68,7 +68,7 @@ const SubmitLink = () => {
                 setLoading(false);
                 let cards: Card[] = [];
                 for (let i = 0; i < data['questions'].length; i++) {
-                    cards.push({question: data['questions'][i], answer: data['answers'][i]});
+                    cards.push({question: data['questions'][i], answer: data['answers'][i+1]});
                 }
                 setCards(cards);
                 setNotesActive(false);
@@ -82,6 +82,11 @@ const SubmitLink = () => {
             <li key={index}> {note} </li>
         )
     }) : null;
+
+    // const effectiveCards = []
+    // for (let i=1;i<cards.length;i++) {
+    //     effectiveCards.push(cards[i])
+    // }
 
     return (
         <div>

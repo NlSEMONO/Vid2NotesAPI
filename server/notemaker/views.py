@@ -74,7 +74,7 @@ def fill_in_the_blanks(request):
     error = '*()&*68234'
     q_to_send = []
     a_to_send = []
-    for i in range(len(questions)):
+    for i in range(min(len(questions), len(defs))):
         if questions[i] != error:
             q_to_send.append(questions[i])
             a_to_send.append(defs[i])

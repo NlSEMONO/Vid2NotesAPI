@@ -54,7 +54,7 @@ def generate_prompt(title, medium='video', type=1):
         return f'Summarize the main points of this {medium} about: {new_title} in bullet points:'
         # return f'What are the main points of this part of a video on {title} in bullet points:'
     else:
-        return f"Can you turn this into a fill in the blanks question:"
+        return f"Can you turn this into a fill in the blanks question"
 
 def try_process(promptText, index, title, media='video', type=1):
     cohereClient = cohere.Client(keys[index])
@@ -71,10 +71,11 @@ def try_process(promptText, index, title, media='video', type=1):
         print('++++++++++++++++++++++++++++++++++++\n\n')
         print(f'{outputList}')
         if type == 1:
-            while '' == outputList[-1]:
+            while len(outputList) > 0 and '' == outputList[-1]:
                 outputList.remove(outputList[-1])
-                if(len(outputList) != 0 and 'summary of the main points' in outputList[0] or '' == outputList[0]):
-                    outputList.remove(outputList[0])
+            while len(outputList) != 0 and ('summar' in outputList[0] or '' == outputList[0]):
+                outputList.remove(outputList[0])
+
             print('===================================\n\n')
             print(outputList)
             
